@@ -2,7 +2,7 @@
   "name": "ultralight-s3",
   "version": "0.0.7",
   "description": "🪽 A turbo lightweight S3 client, no-dependency, ideal for edges or platforms like @cloudflare @aws @Azure @GoogleCloudPlatform @ceph @minio",
-  "main": "./lib/index.min",
+  "main": "./lib/index.min.js",
   "module": "./lib/index.min.js",
   "types": "./lib/index.d.ts",
   "type": "module",
@@ -30,9 +30,9 @@
   "scripts": {
     "prepublishOnly": "npm run build && npm run test:all",
     "build:ts": "tsc",
-    "build": "tsc --module node16 --outDir ./lib/ &&  esbuild lib/index.js --bundle --outfile=lib/index.min.js --platform=node --format=esm --minify --sourcemap",
-    "dev:wrangler": "wrangler dev --port 8787",
-    "dev:node": "nodemon --watch './src/index.ts' --delay 2.5 -L --verbose --exec 'tsc --module node16 --outDir ./lib/ && node --max-old-space-size=4096 --env-file ./.env ./dev/node-dev.js'",
+    "build": "tsc --module nodenext --outDir ./lib/ &&  esbuild lib/index.js --bundle --outfile=lib/index.min.js --platform=node --format=esm --minify --sourcemap",
+    "dev:wrangler": "npm run build && wrangler dev --port 8787",
+    "dev:node": "nodemon --watch './src/index.ts' --delay 2.5 -L --verbose --exec 'tsc --module nodenext --outDir ./lib/ && node --max-old-space-size=4096 --env-file ./.env ./dev/node-dev.js'",
     "test:minio": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config node.jest.config.json",
     "test:cloudflare": "node --env-file ./.env-cf --experimental-vm-modules node_modules/jest/bin/jest.js --config cloudflare.jest.config.json",
     "test:all": "npm run test:minio && npm run test:cloudflare",
@@ -51,7 +51,7 @@
     ]
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   },
   "keywords": [
     "api",
@@ -80,10 +80,11 @@
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.9",
     "esbuild": "^0.23.0",
+    "hono": "^4.5.8",
     "jest": "^29.7.0",
     "minio": "^8.0.1",
     "nodemon": "^3.1.3",
     "typescript": "^5.5.3",
-    "hono": "^4.5.8"
+    "wrangler": "^3.73.0"
   }
 }
