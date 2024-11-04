@@ -9,20 +9,20 @@
   "exports": {
     ".": {
       "import": {
-        "default": "./lib/index.min.js",
-        "types": "./lib/index.d.ts"
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.min.js"
       },
       "types": {
         "import": {
-          "default": "./lib/index.d.ts",
-          "types": "./lib/index.d.ts"
+          "types": "./lib/index.d.ts",
+          "default": "./lib/index.d.ts"
         }
       }
     },
     "./full": {
       "import": {
-        "default": "./lib/index.js",
-        "types": "./lib/index.d.ts"
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
       }
     },
     "./package.json": "./package.json"
