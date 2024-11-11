@@ -3,19 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FemtoS3.js Dev Index File</title>
+    <title>ultralight-s3 - test browser</title>
     <link rel="icon" href="data:image/x-icon;base64,iVBORw0KGgo=" />
   </head>
   <body>
     <h1>Welcome dummy</h1>
     <div id="app"></div>
-    <script type="module" src="./index.js" defer></script>
-    <script type="module" defer>
-      console.log('test2');
-      const configR2 = {};
-      const s3 = new S3(configR2);
-      const s3list = await s3.list();
-      console.log('s3list', s3list);
+    <!-- <script type="module" src="index.min.js"></script> -->
+    <script type="module">
+      import { S3 } from './index.min.js';
+      (async () => {
+        try {
+          const s3 = new S3({
+            endpoint: 'https://bb524cea561a09205de92fae35369ecb.r2.cloudflarestorage.com',
+            accessKeyId: 'd573cce38cb6e9d21e6349a3db49d15a',
+            secretAccessKey: '6053da249eeda22b5bb6950ecc63a539a3507afe5e08708c85fcaec5b431812e',
+            bucketName: 'bordel-testing',
+            region: 'auto',
+            logger: console,
+          });
+          const s3list = await s3.list();
+          console.log(s3list);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      })();
     </script>
   </body>
 </html>

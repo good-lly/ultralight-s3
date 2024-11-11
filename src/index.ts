@@ -109,9 +109,11 @@ type HttpMethod = 'POST' | 'GET' | 'HEAD' | 'PUT' | 'DELETE';
 // null - ETag mismatch (412)
 type ExistResponseCode = false | true | null;
 
-let _createHmac = crypto.createHmac || (await import('node:crypto')).createHmac;
-let _createHash = crypto.createHash || (await import('node:crypto')).createHash;
+// the old way to work with crypto - without browser support
+// let _createHmac = crypto.createHmac || (await import('node:crypto')).createHmac;
+// let _createHash = crypto.createHash || (await import('node:crypto')).createHash;
 
+import { _createHmac, _createHash } from 'crypto-wrapper';
 if (typeof _createHmac === 'undefined' && typeof _createHash === 'undefined') {
   console.error(
     'ultralight-S3 Module: Crypto functions are not available, please report the issue with necessary description: https://github.com/sentienhq/ultralight-s3/issues',
@@ -1087,11 +1089,19 @@ class S3 {
     toleratedStatusCodes: number[] = [],
   ): Promise<Response> {
     this._log('info', `Sending ${method} request to ${url}, headers: ${JSON.stringify(headers)}`);
+    // Remove forbidden headers
+    // const safeHeaders = { ...headers };
+    // delete safeHeaders[HEADER_HOST]; // Browser sets this automatically
+    // delete safeHeaders[HEADER_CONTENT_LENGTH]; // Browser sets this based on the body
+
     const res = await fetch(url, {
       method,
       headers,
       body: ['GET', 'HEAD'].includes(method) ? undefined : body,
       signal: this.requestAbortTimeout !== undefined ? AbortSignal.timeout(this.requestAbortTimeout) : undefined,
+      mode: 'cors', // Ensure CORS mode is enabled
+      credentials: 'omit', // Ensure credentials are included
+      cache: 'no-store',
     });
     this._log('info', `Response status: ${(res.status, toleratedStatusCodes)}`);
     if (!res.ok && !toleratedStatusCodes.includes(res.status)) {
@@ -1120,7 +1130,7 @@ class S3 {
 
     return Object.keys(queryParams)
       .sort()
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent((queryParams as Record<string, any>)[key])}`)
+      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent((queryParams as any)[key])}`)
       .join('&');
   }
   async _getSignatureKey(dateStamp: string): Promise<string> {
